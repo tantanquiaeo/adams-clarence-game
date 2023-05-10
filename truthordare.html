@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Game Selection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://unpkg.com/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <a href="index.html"><button type="button" id="" class="btn btn-primary">Exit to Main Menu</button></a>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-sm-8 col-md-6">
+          <form id="consequence-form">
+            <h2 class="mb-4">Enter Consequences</h2>
+            <div class="form-group">
+              <input type="text" id="consequence-input" class="form-control" placeholder="Enter a consequence">
+              <small id="consequence-error" class="form-text text-danger d-none">Please enter a consequence</small>
+            </div>
+            <div class="form-group text-center">
+              <button type="button" id="add-button" class="btn btn-primary">Add</button>
+            </div>
+          </form>
+          <div id="consequence-list-wrapper" class="d-none">
+            <h2 class="mb-4">Consequences</h2>
+            <ul id="consequence-list"></ul>
+            <div class="form-group text-center mt-4">
+              <button type="button" id="start-button" class="btn btn-primary">Start</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<!-- Main Game -->
+<div class="main-game" style="display: none;">
+    <button type="button" id="game-button" class="btn btn-primary btn-circle"><span>Click Me</span></button>
+  </div>
+  
+  <!-- Modal -->
+  <div class="modal" tabindex="-1" role="dialog" id="consequence-modal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Consequence</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p id="consequence-message"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+    <div class="main-game" style="display: none;">
+
+    </div>
+    <script src="app.js"></script>
+  </body>
+
+  <style>
+
+.main-game {
+  background-color: #f2f2f2;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.btn-circle {
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #007bff;
+}
+
+.btn-circle span {
+  color: #fff;
+  font-size: 1.2rem;
+}
+
+/* Consequence Form */
+#consequence-form {
+  margin: 20px auto;
+  max-width: 500px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+}
+
+#consequence-form h2 {
+  margin-top: 0;
+}
+
+#consequence-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+#consequence-input {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+#consequence-error {
+  color: red;
+  font-size: 14px;
+  margin-bottom: 10px;
+  display: none;
+}
+
+#add-button {
+  background-color: #007bff;
+  border: none;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#add-button:hover {
+  background-color: #0069d9;
+}
+
+/* Consequence List */
+#consequence-list-wrapper {
+  margin: 20px auto;
+  max-width: 500px;
+}
+
+#consequence-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#consequence-list li {
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+}
+/* delete button */
+.delete-button {
+  display: inline-block;
+  background-color: #dc3545;
+  color: white;
+  font-size: 16px;
+  border-radius: 50%;
+  padding: 6px 10px;
+  margin-left: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.delete-button:hover {
+  background-color: #c82333;
+}
+
+
+
+@media (max-width: 576px) {
+  #consequence-form,
+  #consequence-list-wrapper {
+    max-width: 100%;
+  }
+}
+
+  </style>
+
+  <script>
+    const form = document.getElementById('consequence-form');
+const input = document.getElementById('consequence-input');
+const error = document.getElementById('consequence-error');
+const addButton = document.getElementById('add-button');
+const startButton = document.getElementById('start-button');
+const listWrapper = document.getElementById('consequence-list-wrapper');
+const list = document.getElementById('consequence-list');
+let consequences = [];
+
+// function to add consequence to the list
+function addConsequence(consequence, index) {
+  const listItem = document.createElement('li');
+  listItem.classList.add('consequence-item');
+  const span = document.createElement('span');
+  span.classList.add('consequence-text');
+  span.innerText = consequence;
+  const deleteButton = document.createElement('button');
+  deleteButton.classList.add('delete-button');
+  deleteButton.innerHTML = '&times;';
+  deleteButton.addEventListener('click', () => {
+    consequences.splice(index, 1);
+    displayConsequences();
+  });
+  listItem.appendChild(span);
+  listItem.appendChild(deleteButton);
+  list.appendChild(listItem);
+}
+
+// function to display the consequences
+function displayConsequences() {
+  list.innerHTML = '';
+  consequences.forEach((consequence, index) => addConsequence(consequence, index));
+}
+
+
+// function to handle the form submission
+function handleSubmit(event) {
+  event.preventDefault();
+  const value = input.value.trim();
+  if (value) {
+    consequences.push(value);
+    input.value = '';
+    error.classList.add('d-none');
+    displayConsequences();
+    listWrapper.classList.remove('d-none');
+  } else {
+    error.classList.remove('d-none');
+  }
+}
+
+
+// function to handle the start button click
+function handleStart() {
+  document.querySelector('.container').style.display = 'none';
+  document.querySelector('.main-game').style.display = 'block';
+}
+
+
+// function to handle the game button click
+function handleGame() {
+  // generate a random number between 0 and 99
+  const randomNum = Math.floor(Math.random() * 100);
+  // if the random number is less than 30, trigger the consequence button
+  if (randomNum < 30) {
+    // show the modal
+    $('#consequence-modal').modal('show');
+    // select a random consequence from the list
+    const randomIndex = Math.floor(Math.random() * consequences.length);
+    const consequence = consequences[randomIndex];
+    // update the modal message
+    const message = `The consequence is: ${consequence}`;
+    document.getElementById('consequence-message').textContent = message;
+  } else {
+    // show message to the next player
+    alert('Next player, click the button!');
+  }
+}
+
+// event listener for game button click
+document.getElementById('game-button').addEventListener('click', handleGame);
+
+
+// event listeners
+form.addEventListener('submit', handleSubmit);
+addButton.addEventListener('click', handleSubmit);
+startButton.addEventListener('click', handleStart);
+
+  </script>
+</html>
